@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "comparison"
+name = "incomplete_ode_comparison"
 version = "0.1.0"
 description = ""
 authors = ["Niko Siccha <nikolassiccha@gmail.com>"]

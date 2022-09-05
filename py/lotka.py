@@ -8,12 +8,13 @@ model = CmdStanModel(stan_file="stan/lotka.stan")
 no_repetitions = 20
 runtimes = [0] * no_repetitions
 
-
 for i in range(no_repetitions):
     start = time.perf_counter()
     model.sample(data="data/lotka.json", adapt_delta=.65, chains=1, show_progress=False)
     runtimes[i] = time.perf_counter() - start
 
-print(runtimes)
-sns.boxenplot(y=runtimes)
-plt.savefig('figs/lotka_py.png')
+fig, ax = plt.subplots(1,1)
+fig.suptitle("Wall times for CmdStanPy sampling from the Lotka-Volterra posterior.")
+ax.set(xlabel="Stan", ylabel="runtime [s]", ylim=[0, max(runtimes)])
+sns.boxenplot(ax=ax, y=runtimes)
+fig.savefig('figs/lotka_py.png')

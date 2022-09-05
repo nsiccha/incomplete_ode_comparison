@@ -49,11 +49,46 @@ begin
 	end
 end;
 
-# ╔═╡ fc5540f5-d61f-475d-b13f-4555ac107324
-println(runtimes)
-
 # ╔═╡ 5fb97ca1-9c7c-481a-97b8-ddd7a092f198
-savefig(boxplot(runtimes), "../figs/lotka_jl.png")
+begin
+	pp = plot(
+		xlabel="Turing.jl", ylabel="runtime [s]", ylim=[0, maximum(runtimes)],
+		title="Wall times for Turing.jl\nsampling from the Lotka-Volterra posterior.",
+		size=(600, 500)
+	)
+	boxplot!(pp, runtimes)
+	savefig(pp, "../figs/lotka_jl.png")
+end
+
+# ╔═╡ 92d5fb80-59da-411a-bc57-270d347a0dc7
+
+
+# ╔═╡ f910bd33-1a58-4cac-9358-509aa35d48f8
+
+
+# ╔═╡ de3bc655-44ba-41b1-97b5-d2e743782025
+
+
+# ╔═╡ 4461e875-0c68-42d9-bfdd-c4260b1b2be5
+
+
+# ╔═╡ cb1c42ef-73a7-416d-83df-641cf091869b
+
+
+# ╔═╡ a58f123d-ef3d-49e2-8507-ec1444d5b6c3
+
+
+# ╔═╡ 1228e94a-8c5f-4f66-91af-17959a7be30a
+
+
+# ╔═╡ 60635cdb-2fa8-430a-ae43-e79c95dfee94
+
+
+# ╔═╡ 45dba059-d4b0-4f02-b08b-becb9cc535d7
+
+
+# ╔═╡ 5966a7c9-61be-44f6-aa78-a8f7ca339ffa
+
 
 # ╔═╡ 838901e5-8f85-4bc1-805d-1ac91e897e5c
 
@@ -2336,8 +2371,17 @@ version = "1.4.1+0"
 # ╠═c6d36346-4cf2-4565-b57f-def53e5bffe3
 # ╠═cf48b97d-6995-4510-8118-9cba806dce14
 # ╠═d5b59893-579e-4d57-8723-8bca83b18233
-# ╠═fc5540f5-d61f-475d-b13f-4555ac107324
 # ╠═5fb97ca1-9c7c-481a-97b8-ddd7a092f198
+# ╠═92d5fb80-59da-411a-bc57-270d347a0dc7
+# ╠═f910bd33-1a58-4cac-9358-509aa35d48f8
+# ╠═de3bc655-44ba-41b1-97b5-d2e743782025
+# ╠═4461e875-0c68-42d9-bfdd-c4260b1b2be5
+# ╠═cb1c42ef-73a7-416d-83df-641cf091869b
+# ╠═a58f123d-ef3d-49e2-8507-ec1444d5b6c3
+# ╠═1228e94a-8c5f-4f66-91af-17959a7be30a
+# ╠═60635cdb-2fa8-430a-ae43-e79c95dfee94
+# ╠═45dba059-d4b0-4f02-b08b-becb9cc535d7
+# ╠═5966a7c9-61be-44f6-aa78-a8f7ca339ffa
 # ╠═838901e5-8f85-4bc1-805d-1ac91e897e5c
 # ╠═ed2b9ab1-79b1-48c7-b526-b2ade5b732a6
 # ╠═075f6287-2d8e-4583-91dc-1e799fa9ae3e
