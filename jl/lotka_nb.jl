@@ -1,3 +1,149 @@
+### A Pluto.jl notebook ###
+# v0.19.11
+
+using Markdown
+using InteractiveUtils
+
+# ╔═╡ 942439f2-2d13-11ed-2e50-1b9ca8ff627b
+begin
+	using DiffEqBayes, DynamicHMC  
+	using Distributions, BenchmarkTools
+	using OrdinaryDiffEq, RecursiveArrayTools, ParameterizedFunctions
+	using Plots
+	using Random
+	using StatsPlots
+	using JSON
+end
+
+# ╔═╡ c6d36346-4cf2-4565-b57f-def53e5bffe3
+begin
+	f = @ode_def LotkaVolterraTest begin
+	    dx = a*x - b*x*y
+	    dy = -c*y + d*x*y
+	end a b c d
+	Random.seed!(123)
+	u0 = [1.0,1.0]
+	tspan = (0.0,10.0)
+	p = [1.5,1.0,3.0,1,0]
+	prob = ODEProblem(f,u0,tspan,p)
+	t = collect(range(1,stop=10,length=10))
+	sig = 0.49
+	data = zeros(2, length(t))
+	jdata = convert(Array, JSON.parsefile("../data/lotka.json")["u"])
+	for i in 1:2, j in 1:length(t)
+		data[i,j] = jdata[j][i]
+	end
+	priors = [Truncated(Normal(1.5,0.5),0.5,2.5),Truncated(Normal(1.2,0.5),0,2),Truncated(Normal(3.0,0.5),1,4),Truncated(Normal(1.0,0.5),0,2)]
+end;
+
+# ╔═╡ cf48b97d-6995-4510-8118-9cba806dce14
+# run this once to compile
+turing_inference(prob,Tsit5(),t,data,priors,num_samples=1_000);
+
+# ╔═╡ d5b59893-579e-4d57-8723-8bca83b18233
+begin
+	no_repetitions = 20
+	runtimes = zeros(no_repetitions)
+	for i in 1:no_repetitions
+		runtimes[i] = @elapsed turing_inference(prob,Tsit5(),t,data,priors,num_samples=1_000)
+	end
+end;
+
+# ╔═╡ 5fb97ca1-9c7c-481a-97b8-ddd7a092f198
+begin
+	pp = plot(
+		xlabel="Turing.jl", ylabel="runtime [s]", ylim=[0, maximum(runtimes)],
+		title="Wall times for Turing.jl\nsampling from the Lotka-Volterra posterior.",
+		size=(600, 500)
+	)
+	boxplot!(pp, runtimes)
+	savefig(pp, "../figs/lotka_jl.png")
+end
+
+# ╔═╡ 92d5fb80-59da-411a-bc57-270d347a0dc7
+
+
+# ╔═╡ f910bd33-1a58-4cac-9358-509aa35d48f8
+
+
+# ╔═╡ de3bc655-44ba-41b1-97b5-d2e743782025
+
+
+# ╔═╡ 4461e875-0c68-42d9-bfdd-c4260b1b2be5
+
+
+# ╔═╡ cb1c42ef-73a7-416d-83df-641cf091869b
+
+
+# ╔═╡ a58f123d-ef3d-49e2-8507-ec1444d5b6c3
+
+
+# ╔═╡ 1228e94a-8c5f-4f66-91af-17959a7be30a
+
+
+# ╔═╡ 60635cdb-2fa8-430a-ae43-e79c95dfee94
+
+
+# ╔═╡ 45dba059-d4b0-4f02-b08b-becb9cc535d7
+
+
+# ╔═╡ 5966a7c9-61be-44f6-aa78-a8f7ca339ffa
+
+
+# ╔═╡ 838901e5-8f85-4bc1-805d-1ac91e897e5c
+
+
+# ╔═╡ ed2b9ab1-79b1-48c7-b526-b2ade5b732a6
+
+
+# ╔═╡ 075f6287-2d8e-4583-91dc-1e799fa9ae3e
+
+
+# ╔═╡ 22882233-8a0e-49bd-a7c7-31fd3265f7b9
+
+
+# ╔═╡ 826dfe44-cf8b-4908-b056-49aecf1af00e
+
+
+# ╔═╡ 45c5f79e-61e5-4809-b0e8-b67590e010f7
+
+
+# ╔═╡ ccbef188-79ac-4760-9b74-0efd509d043c
+
+
+# ╔═╡ 0b6ce7d3-b79f-4afa-88ea-50285fb13517
+
+
+# ╔═╡ 00000000-0000-0000-0000-000000000001
+PLUTO_PROJECT_TOML_CONTENTS = """
+[deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+DiffEqBayes = "ebbdde9d-f333-5424-9be2-dbf1e9acfb5e"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+DynamicHMC = "bbc10e6e-7c05-544b-b16e-64fede858acb"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
+ParameterizedFunctions = "65888b18-ceab-5e60-b2b9-181511a3b968"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+RecursiveArrayTools = "731186ca-8d62-57ce-b412-fbd966d074cd"
+StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
+
+[compat]
+BenchmarkTools = "~1.3.1"
+DiffEqBayes = "~3.0.0"
+Distributions = "~0.25.70"
+DynamicHMC = "~3.3.0"
+JSON = "~0.21.3"
+OrdinaryDiffEq = "~6.26.2"
+ParameterizedFunctions = "~5.14.0"
+Plots = "~1.32.0"
+RecursiveArrayTools = "~2.32.0"
+StatsPlots = "~0.15.2"
+"""
+
+# ╔═╡ 00000000-0000-0000-0000-000000000002
+PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
 julia_version = "1.7.2"
@@ -163,6 +309,12 @@ git-tree-sha1 = "aebf55e6d7795e02ca500a689d326ac979aaf89e"
 uuid = "9718e550-a3fa-408a-8086-8db961cd8217"
 version = "0.1.1"
 
+[[deps.BenchmarkTools]]
+deps = ["JSON", "Logging", "Printf", "Profile", "Statistics", "UUIDs"]
+git-tree-sha1 = "4c10eee4af024676200bc7752e536f858c6b8f93"
+uuid = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+version = "1.3.1"
+
 [[deps.Bijections]]
 git-tree-sha1 = "fe4f8c5ee7f76f2198d5c2a06d3961c249cce7bd"
 uuid = "e2ed5e7c-b2de-5872-ae92-c73ca462fb04"
@@ -323,12 +475,6 @@ version = "0.1.2"
 git-tree-sha1 = "455419f7e328a1a2493cabc6428d79e951349769"
 uuid = "a33af91c-f02d-484b-be07-31d278c5ca2b"
 version = "0.1.1"
-
-[[deps.Configurations]]
-deps = ["ExproniconLite", "OrderedCollections", "TOML"]
-git-tree-sha1 = "62a7c76dbad02fdfdaa53608104edf760938c4ca"
-uuid = "5218b696-f38b-4ac9-8b61-a12ec717816d"
-version = "0.17.4"
 
 [[deps.ConsoleProgressMonitor]]
 deps = ["Logging", "ProgressMeter"]
@@ -532,11 +678,6 @@ git-tree-sha1 = "56559bbef6ca5ea0c0818fa5c90320398a6fbf8d"
 uuid = "e2ba6199-217a-4e67-a87a-7c52f15ade04"
 version = "0.1.8"
 
-[[deps.ExproniconLite]]
-git-tree-sha1 = "07b85b02d910f90dde6b383484c5ee6c0f169fa3"
-uuid = "55351af7-c7e9-48d6-89ff-24e801d99491"
-version = "0.7.0"
-
 [[deps.Extents]]
 git-tree-sha1 = "5e1e4c53fa39afe63a7d356e30452249365fba99"
 uuid = "411431e0-e8b7-467b-b5e0-f676ba4f2910"
@@ -588,9 +729,6 @@ deps = ["Compat", "Dates", "Mmap", "Printf", "Test", "UUIDs"]
 git-tree-sha1 = "316daa94fad0b7a008ebd573e002efd6609d85ac"
 uuid = "48062228-2e41-5def-b9a4-89aafe57970f"
 version = "0.9.19"
-
-[[deps.FileWatching]]
-uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[deps.FillArrays]]
 deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
@@ -660,12 +798,6 @@ version = "0.3.0"
 [[deps.Future]]
 deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
-
-[[deps.FuzzyCompletions]]
-deps = ["REPL"]
-git-tree-sha1 = "e16dd964b4dfaebcded16b2af32f05e235b354be"
-uuid = "fb4132e2-a121-4a70-b8a1-d5b831dcdcc2"
-version = "0.5.1"
 
 [[deps.GLFW_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libglvnd_jll", "Pkg", "Xorg_libXcursor_jll", "Xorg_libXi_jll", "Xorg_libXinerama_jll", "Xorg_libXrandr_jll"]
@@ -773,12 +905,6 @@ deps = ["DualNumbers", "LinearAlgebra", "OpenLibm_jll", "SpecialFunctions", "Tes
 git-tree-sha1 = "709d864e3ed6e3545230601f94e11ebc65994641"
 uuid = "34004b35-14d8-5ef3-9330-4cdb6864b03a"
 version = "0.3.11"
-
-[[deps.HypertextLiteral]]
-deps = ["Tricks"]
-git-tree-sha1 = "c47c5fa4c5308f27ccaac35504858d8914e102f9"
-uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
-version = "0.9.4"
 
 [[deps.IOCapture]]
 deps = ["Logging", "Random"]
@@ -1121,11 +1247,6 @@ git-tree-sha1 = "59ac3cc5c08023f58b9cd6a5c447c4407cede6bc"
 uuid = "be115224-59cd-429b-ad48-344e309966f0"
 version = "0.1.4"
 
-[[deps.MIMEs]]
-git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
-uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
-version = "0.1.4"
-
 [[deps.MKL_jll]]
 deps = ["Artifacts", "IntelOpenMP_jll", "JLLWrappers", "LazyArtifacts", "Libdl", "Pkg"]
 git-tree-sha1 = "41d162ae9c868218b1f3fe78cba878aa348c2d26"
@@ -1208,12 +1329,6 @@ version = "1.0.10"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
-
-[[deps.MsgPack]]
-deps = ["Serialization"]
-git-tree-sha1 = "a8cbf066b54d793b9a48c5daa5d586cf2b5bd43d"
-uuid = "99f44e22-a591-53d1-9472-aa23ef4bd671"
-version = "1.1.0"
 
 [[deps.MuladdMacro]]
 git-tree-sha1 = "c6190f9a7fc5d9d5915ab29f2134421b12d24a68"
@@ -1417,12 +1532,6 @@ git-tree-sha1 = "3f9b0706d6051d8edf9959e2422666703080722a"
 uuid = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 version = "1.32.0"
 
-[[deps.Pluto]]
-deps = ["Base64", "Configurations", "Dates", "Distributed", "FileWatching", "FuzzyCompletions", "HTTP", "HypertextLiteral", "InteractiveUtils", "Logging", "MIMEs", "Markdown", "MsgPack", "Pkg", "PrecompileSignatures", "REPL", "RelocatableFolders", "Sockets", "TOML", "Tables", "URIs", "UUIDs"]
-git-tree-sha1 = "c189ae928e2cfc3495b13e85d9e90ddedeac0a4d"
-uuid = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
-version = "0.19.11"
-
 [[deps.PoissonRandom]]
 deps = ["Random"]
 git-tree-sha1 = "9ac1bb7c15c39620685a3a7babc0651f5c64c35b"
@@ -1459,11 +1568,6 @@ git-tree-sha1 = "5c076a409ec8d2a86d3685a7e4fed330cd489889"
 uuid = "d236fae5-4411-538c-8e31-a6e3d9e00b46"
 version = "0.4.2"
 
-[[deps.PrecompileSignatures]]
-git-tree-sha1 = "18ef344185f25ee9d51d80e179f8dad33dc48eb1"
-uuid = "91cefc8d-f054-46dc-8f8c-26e11d7c5411"
-version = "3.0.3"
-
 [[deps.Preferences]]
 deps = ["TOML"]
 git-tree-sha1 = "47e5f437cc0e7ef2ce8406ce1e7e24d44915f88d"
@@ -1485,6 +1589,10 @@ version = "0.5.3"
 [[deps.Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+
+[[deps.Profile]]
+deps = ["Printf"]
+uuid = "9abbd945-dff8-562f-b5e8-e1ebf5ef1b79"
 
 [[deps.ProgressLogging]]
 deps = ["Logging", "SHA", "UUIDs"]
@@ -2256,3 +2364,31 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Wayland_jll", "Wayland_prot
 git-tree-sha1 = "9ebfc140cc56e8c2156a15ceac2f0302e327ac0a"
 uuid = "d8fb68d0-12a3-5cfd-a85a-d49703b185fd"
 version = "1.4.1+0"
+"""
+
+# ╔═╡ Cell order:
+# ╠═942439f2-2d13-11ed-2e50-1b9ca8ff627b
+# ╠═c6d36346-4cf2-4565-b57f-def53e5bffe3
+# ╠═cf48b97d-6995-4510-8118-9cba806dce14
+# ╠═d5b59893-579e-4d57-8723-8bca83b18233
+# ╠═5fb97ca1-9c7c-481a-97b8-ddd7a092f198
+# ╠═92d5fb80-59da-411a-bc57-270d347a0dc7
+# ╠═f910bd33-1a58-4cac-9358-509aa35d48f8
+# ╠═de3bc655-44ba-41b1-97b5-d2e743782025
+# ╠═4461e875-0c68-42d9-bfdd-c4260b1b2be5
+# ╠═cb1c42ef-73a7-416d-83df-641cf091869b
+# ╠═a58f123d-ef3d-49e2-8507-ec1444d5b6c3
+# ╠═1228e94a-8c5f-4f66-91af-17959a7be30a
+# ╠═60635cdb-2fa8-430a-ae43-e79c95dfee94
+# ╠═45dba059-d4b0-4f02-b08b-becb9cc535d7
+# ╠═5966a7c9-61be-44f6-aa78-a8f7ca339ffa
+# ╠═838901e5-8f85-4bc1-805d-1ac91e897e5c
+# ╠═ed2b9ab1-79b1-48c7-b526-b2ade5b732a6
+# ╠═075f6287-2d8e-4583-91dc-1e799fa9ae3e
+# ╠═22882233-8a0e-49bd-a7c7-31fd3265f7b9
+# ╠═826dfe44-cf8b-4908-b056-49aecf1af00e
+# ╠═45c5f79e-61e5-4809-b0e8-b67590e010f7
+# ╠═ccbef188-79ac-4760-9b74-0efd509d043c
+# ╠═0b6ce7d3-b79f-4afa-88ea-50285fb13517
+# ╟─00000000-0000-0000-0000-000000000001
+# ╟─00000000-0000-0000-0000-000000000002
