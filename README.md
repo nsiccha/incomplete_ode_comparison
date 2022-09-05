@@ -3,6 +3,8 @@ A bad and incomplete comparison of Stan and Turing.jl for ODE models
 
 Sampling the same posterior as in https://benchmarks.sciml.ai/html/ParameterEstimation/DiffEqBayesLotkaVolterra.html
 
+Each script samples the same posterior 20 times, with the average time on my machine being ~3.6 seconds for stan and ~4.5 seconds for julia.
+
 To run the python and Julia script and combine the images as in https://github.com/nsiccha/incomplete_ode_comparison/blob/main/figs/lotka.png run `source run.sh`.
 
 Should produce one figure each in the folder `figs` showing wall times,
