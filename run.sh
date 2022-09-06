@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 poetry install && poetry run python3 py/lotka.py
-julia --project=./jl jl/lotka.jl
-convert +append figs/lotka_{jl,py}.png figs/lotka.png
+julia --threads 6 --project=./jl jl/lotka_static.jl
+convert +append figs/lotka_{py,jl_static}.png figs/lotka.png

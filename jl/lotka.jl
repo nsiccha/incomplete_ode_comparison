@@ -14,7 +14,7 @@ tspan = (0.0,10.0)
 p = [1.5,1.0,3.0,1,0]
 prob = ODEProblem(f,u0,tspan,p)
 t = collect(range(1,stop=10,length=10))
-sig = 0.49
+# sig = 0.49
 data = zeros(2, length(t))
 jdata = convert(Array, JSON.parsefile("../data/lotka.json")["u"])
 for i in 1:2, j in 1:length(t)

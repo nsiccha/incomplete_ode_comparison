@@ -27,7 +27,7 @@ model{
     p2 ~ normal(1.2, 0.5);
     p3 ~ normal(3.0, 0.5);
     p4 ~ normal(1.0, 0.5);
-    u_hat = ode_rk45_tol(ode_rhs, u0, t0, ts, 1e-3, 1.0e-6, 100000, p1,p2,p3,p4);
+    u_hat = ode_rk45_tol(ode_rhs, u0, t0, ts, 1e-3, 1.0e-6, 1000, p1,p2,p3,p4);
     for (t in 1:T){
         u[t,:] ~ normal(u_hat[t,1:2],sigma);
     }
