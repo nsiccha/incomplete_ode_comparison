@@ -12,7 +12,7 @@ print("RUNNING STAN BENCHMARK")
 for i in range(no_repetitions):
     print(f'ITERATION {i}')
     start = time.perf_counter()
-    model.sample(data="data/lotka.json", adapt_delta=.65, chains=1, show_progress=False)
+    model.sample(data="data/lotka.json", adapt_delta=.65, chains=1, show_progress=False, iter_sampling=500)
     runtimes[i] = time.perf_counter() - start
 print("RUNTIMES:")
 print(runtimes)

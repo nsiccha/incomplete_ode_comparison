@@ -31,7 +31,8 @@ runtimes = zeros(no_repetitions)
 println("RUNNING TURING.JL BENCHMARK")
 for i in 1:no_repetitions
 	println("ITERATION", i)
-	runtimes[i] = @elapsed turing_inference(prob,Tsit5(),t,data,priors,num_samples=1_000)
+	runtimes[i] = @elapsed sol = turing_inference(prob,Tsit5(),t,data,priors,num_samples=1_000)
+	display(sol)
 end
 println("RUNTIMES:")
 println(runtimes)
