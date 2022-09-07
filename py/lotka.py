@@ -26,11 +26,13 @@ print(runtimes)
 fig, ax = plt.subplots(1,1)
 fig.suptitle("ESS/s for CmdStanPy sampling from the Lotka-Volterra posterior.")
 ax.set(
-    xlabel="Stan",
-    ylabel="ESS/s [1/s]", ylim=[0, 800],
-    xlim=[.5, 5.5], yticks=[0,200,400,600,800]
+    xlabel=f"Stan, mean ESS/s:\n{np.round(np.mean(esss, axis=0))}",
+    ylabel="ESS/s [1/s]", ylim=[0, 1000],
+    xlim=[.5, 5.5], yticks=[0,200,400,600,800,1000]
 )
 ax.grid(True)
 # sns.boxplot(ax=ax, y=runtimes)
 sns.boxplot(ax=ax, data=esss)
+sns.swarmplot(ax=ax, data=esss, color="red")
+plt.tight_layout()
 fig.savefig('figs/lotka_py.png')

@@ -3,6 +3,8 @@ using Turing
 using Distributions, StaticArrays
 using OrdinaryDiffEq, RecursiveArrayTools, ParameterizedFunctions
 using Plots, LinearAlgebra, StatsPlots, JSON
+using Logging
+Logging.disable_logging(Logging.Warn);
 
 f = @ode_def LotkaVolterraTest begin
     dx = a*x - b*x*y
@@ -75,10 +77,16 @@ println("RUNTIMES:")
 println(runtimes)
 
 pp = plot(
-	xlabel="Turing.jl", ylabel="ESS/s [1/s]", ylim=[0, 800],
+	xlabel="Turing.jl, mean ESS/s:\n$(round.(mean(esss, dims=1)))", ylabel="ESS/s [1/s]", ylim=[0, 1000],
 	title="ESS/s for static Turing.jl\nsampling from the Lotka-Volterra posterior.",
-	yticks=[0 200 400 600 800]',
+	yticks=[0 200 400 600 800 1000]',
 	size=(600, 500)
 )
-boxplot!(pp, esss)
-savefig(pp, "figs/lotka_jl_static.png")
+x = hcat([
+	0:4
+	for i in 1:1
+]...)
+
+boxplot!(pp, x', esss, label="")
+dotplot!(pp, x', esss, color=:red, label="")
+savefig(pp, "figs/lotka_jl.png")
